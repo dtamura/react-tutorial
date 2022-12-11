@@ -1,6 +1,7 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { decrement, increment } from './authSlice'
+import firebase from './firebase';
 
 
 export default function HomePage(props) {
@@ -32,10 +33,11 @@ export default function HomePage(props) {
       <div className="container">
         <h3>ホーム</h3>
 
-        <h4>こんにちは、TODO NAME さん</h4>
+        <h4>こんにちは、{firebase.auth().currentUser.email} さん</h4>
 
         <button onClick={() => dispatch(increment())}>+</button>
         <button onClick={() => dispatch(decrement())}>-</button>
+        <button onClick={() => firebase.auth().signOut()}>Log Out</button>
         <h3>{count}</h3>
 
         <div className="row">

@@ -1,12 +1,24 @@
 import { useRef, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setIsSignedIn } from "./authSlice";
 import M from "materialize-css";
+import firebase from "./firebase";
 
 export default function Sidenav(props) {
   const nav = useRef(null);
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     M.Sidenav.init(nav.current);
   }, []);
+  // Listen to the Firebase Auth state and set the local state.
+  useEffect(() => {
+    const unregisterAuthObserver = firebase.auth().onAuthStateChanged((user) => {
+      dispatch(setIsSignedIn(!!user)); // 一番最初に呼ぶ
+    });
+    return () => unregisterAuthObserver(); // Make sure we un-register Firebase observers when the component unmounts.
+  }, [dispatch]);
 
   return (
     <div>
@@ -103,7 +115,7 @@ export default function Sidenav(props) {
         </li>
 
         <li>
-          <a className="waves-effect" href="{{ route('auth::logout') }}">
+          <a className="waves-effect" href="#!" onClick={() => firebase.auth().signOut()}>
             <i className="material-icons">exit_to_app</i>ログアウト
           </a>
         </li>

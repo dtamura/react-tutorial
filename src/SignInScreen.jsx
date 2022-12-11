@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import firebase from "../firebase";
+import { useSelector, useDispatch } from "react-redux";
+import firebase from "./firebase";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import "firebase/compat/auth";
+import { setIsSignedIn } from "./authSlice";
 
 // Configure FirebaseUI.
 const uiConfig = {
@@ -11,7 +13,7 @@ const uiConfig = {
 
   // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
   signInSuccessUrl: "/",
-  signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID, firebase.auth.EmailAuthProvider.PROVIDER_ID],
+  signInOptions: [firebase.auth.EmailAuthProvider.PROVIDER_ID],
   callbacks: {
     // Avoid redirects after sign-in.
     signInSuccessWithAuthResult: () => false,
@@ -19,16 +21,25 @@ const uiConfig = {
 };
 
 function SignInScreen() {
-  const [isSignedIn, setIsSignedIn] = useState(false); // Local signed-in state.
+  const isSignedIn = useSelector((state) => state.counter.isSignedIn);
+  const dispatch = useDispatch();
+
+  const [isLoading, setIsLoading] = useState(true);
 
   // Listen to the Firebase Auth state and set the local state.
   useEffect(() => {
     const unregisterAuthObserver = firebase.auth().onAuthStateChanged((user) => {
-      setIsSignedIn(!!user);
+      dispatch(setIsSignedIn(!!user)); // 一番最初に呼ぶ
+      setIsLoading(false);
     });
     return () => unregisterAuthObserver(); // Make sure we un-register Firebase observers when the component unmounts.
-  }, []);
+  }, [dispatch]);
 
+  if(isLoading) {
+    return (
+      <p>Loading....</p>
+    );
+  }
   if (!isSignedIn) {
     return (
       <div>
