@@ -1,4 +1,13 @@
+import React from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { decrement, increment } from './authSlice'
+
+
 export default function HomePage(props) {
+
+  const count = useSelector(state => state.counter.value);
+  const dispatch = useDispatch();
+
   const nextSchedule = {
     typeName: "全奏",
     date: "12/24",
@@ -24,6 +33,10 @@ export default function HomePage(props) {
         <h3>ホーム</h3>
 
         <h4>こんにちは、TODO NAME さん</h4>
+
+        <button onClick={() => dispatch(increment())}>+</button>
+        <button onClick={() => dispatch(decrement())}>-</button>
+        <h3>{count}</h3>
 
         <div className="row">
           {/* 次の練習 */}

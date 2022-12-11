@@ -1,5 +1,4 @@
-import React, { Component, useEffect, useRef } from "react";
-import M from "materialize-css";
+import React from "react";
 import Sidenav from "./Sidenav";
 import Footer from "./Footer";
 import "materialize-css/dist/css/materialize.min.css";
